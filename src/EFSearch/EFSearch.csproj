@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageId>EFSearch</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>EFSearch Contributors</Authors>
+    <Description>A dynamic, type-safe search engine based on query models transformed into Expression Trees for IQueryable&lt;T&gt;. Supports filtering, sorting, and pagination.</Description>
+    <PackageTags>ef-core;search;filtering;sorting;pagination;expression-trees;linq</PackageTags>
+    <RepositoryUrl>https://github.com/agriffard/EFSearch</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+</Project>
