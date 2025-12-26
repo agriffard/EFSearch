@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text.Json;
 using EFSearch.Mapping;
 using EFSearch.Models;
 
@@ -99,7 +100,17 @@ internal static class ExpressionBuilder
 
         var underlyingType = Nullable.GetUnderlyingType(targetType) ?? targetType;
 
-        if (value.GetType() == underlyingType)
+        // Handle JsonElement from System.Text.Json deserialization
+        if (value is JsonElement jsonElement)
+        {
+            value = ConvertJsonElement(jsonElement, underlyingType);
+            if (value != null && value.GetType() == underlyingType)
+            {
+                return value;
+            }
+        }
+
+        if (value != null && value.GetType() == underlyingType)
         {
             return value;
         }
@@ -113,6 +124,44 @@ internal static class ExpressionBuilder
             throw new InvalidOperationException(
                 $"Cannot convert value '{value}' to type '{underlyingType.Name}'.", ex);
         }
+    }
+
+    private static object? ConvertJsonElement(JsonElement element, Type targetType)
+    {
+        return element.ValueKind switch
+        {
+            JsonValueKind.String => targetType == typeof(DateTime) || targetType == typeof(DateTime?)
+                ? element.GetDateTime()
+                : targetType == typeof(Guid) || targetType == typeof(Guid?)
+                    ? element.GetGuid()
+                    : element.GetString(),
+            JsonValueKind.Number => ConvertJsonNumber(element, targetType),
+            JsonValueKind.True => true,
+            JsonValueKind.False => false,
+            JsonValueKind.Null => null,
+            _ => element.GetRawText()
+        };
+    }
+
+    private static object ConvertJsonNumber(JsonElement element, Type targetType)
+    {
+        if (targetType == typeof(int) || targetType == typeof(int?))
+            return element.GetInt32();
+        if (targetType == typeof(long) || targetType == typeof(long?))
+            return element.GetInt64();
+        if (targetType == typeof(decimal) || targetType == typeof(decimal?))
+            return element.GetDecimal();
+        if (targetType == typeof(double) || targetType == typeof(double?))
+            return element.GetDouble();
+        if (targetType == typeof(float) || targetType == typeof(float?))
+            return element.GetSingle();
+        if (targetType == typeof(short) || targetType == typeof(short?))
+            return element.GetInt16();
+        if (targetType == typeof(byte) || targetType == typeof(byte?))
+            return element.GetByte();
+        
+        // Default to double for unknown numeric types
+        return element.GetDouble();
     }
 
     private static bool IsNullable(Type type)

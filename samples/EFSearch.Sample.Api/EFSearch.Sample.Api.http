@@ -1,0 +1,94 @@
+@EFSearch.Sample.Api_HostAddress = http://localhost:5292
+
+### Get all products (paginated)
+GET {{EFSearch.Sample.Api_HostAddress}}/api/products?pageNumber=1&pageSize=5
+Accept: application/json
+
+### Get product by ID
+GET {{EFSearch.Sample.Api_HostAddress}}/api/products/1
+Accept: application/json
+
+### Search products - Filter by category
+POST {{EFSearch.Sample.Api_HostAddress}}/api/products/search
+Content-Type: application/json
+
+{
+  "filters": [
+    {
+      "field": "Category",
+      "operator": 0,
+      "value": "Electronics"
+    }
+  ],
+  "sorts": [],
+  "pageNumber": 1,
+  "pageSize": 10
+}
+
+### Search products - Filter by price range and sort by price descending
+POST {{EFSearch.Sample.Api_HostAddress}}/api/products/search
+Content-Type: application/json
+
+{
+  "filters": [
+    {
+      "field": "Price",
+      "operator": 5,
+      "value": 100
+    }
+  ],
+  "sorts": [
+    {
+      "field": "Price",
+      "direction": 1
+    }
+  ],
+  "pageNumber": 1,
+  "pageSize": 10
+}
+
+### Search products - Filter by name contains "Desk"
+POST {{EFSearch.Sample.Api_HostAddress}}/api/products/search
+Content-Type: application/json
+
+{
+  "filters": [
+    {
+      "field": "Name",
+      "operator": 6,
+      "value": "Desk"
+    }
+  ],
+  "sorts": [
+    {
+      "field": "Name",
+      "direction": 0
+    }
+  ],
+  "pageNumber": 1,
+  "pageSize": 10
+}
+
+### Search products - Filter active products only, sorted by CreatedAt
+POST {{EFSearch.Sample.Api_HostAddress}}/api/products/search
+Content-Type: application/json
+
+{
+  "filters": [
+    {
+      "field": "IsActive",
+      "operator": 0,
+      "value": true
+    }
+  ],
+  "sorts": [
+    {
+      "field": "CreatedAt",
+      "direction": 1
+    }
+  ],
+  "pageNumber": 1,
+  "pageSize": 5
+}
+
+###

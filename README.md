@@ -140,6 +140,70 @@ public IActionResult GetProducts([FromQuery] SearchRequest request)
 }
 ```
 
+## Sample API
+
+A complete sample ASP.NET Core Web API is available in the `samples/EFSearch.Sample.Api` directory. It demonstrates:
+
+- **ProductsController** with search endpoint
+- **SampleDbContext** with EF Core InMemory database
+- **Product** entity with sample seed data
+
+### Running the Sample
+
+```bash
+cd samples/EFSearch.Sample.Api
+dotnet run
+```
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/products` | Get all products (paginated) |
+| GET | `/api/products/{id}` | Get a product by ID |
+| POST | `/api/products/search` | Search products with filters, sorting, and pagination |
+
+### Search Request Example
+
+```json
+POST /api/products/search
+{
+  "filters": [
+    { "field": "Category", "operator": 0, "value": "Electronics" },
+    { "field": "Price", "operator": 5, "value": 100 }
+  ],
+  "sorts": [
+    { "field": "Price", "direction": 0 }
+  ],
+  "pageNumber": 1,
+  "pageSize": 10
+}
+```
+
+### Search Response Example
+
+```json
+{
+  "items": [
+    {
+      "id": 3,
+      "name": "USB-C Cable",
+      "category": "Electronics",
+      "price": 12.99,
+      "stock": 500,
+      "isActive": true,
+      "createdAt": "2024-03-05T00:00:00"
+    }
+  ],
+  "totalCount": 8,
+  "pageNumber": 1,
+  "pageSize": 10,
+  "totalPages": 1,
+  "hasPreviousPage": false,
+  "hasNextPage": false
+}
+```
+
 ## License
 
 MIT
