@@ -1,0 +1,16 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/samples/">
+    <Project Path="samples/EFSearch.Sample.Api/EFSearch.Sample.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/EFSearch/EFSearch.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/EFSearch.Tests/EFSearch.Tests.csproj" />
+  </Folder>
+</Solution>
