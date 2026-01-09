@@ -103,14 +103,14 @@ Content-Type: application/json
   "filters": [
     {
       "field": "Price",
-      "operator": 4,
+      "operator": "LessThan",
       "value": 100
     }
   ],
   "sorts": [
     {
       "field": "CategoryName",
-      "direction": 0
+      "direction": "Ascending"
     }
   ],
   "pageNumber": 1,
@@ -119,16 +119,16 @@ Content-Type: application/json
 ```
 
 ### Available Filter Operators
-- `0` = Equals
-- `1` = NotEquals
-- `2` = GreaterThan
-- `3` = GreaterThanOrEqual
-- `4` = LessThan
-- `5` = LessThanOrEqual
-- `6` = Contains
-- `7` = StartsWith
-- `8` = EndsWith
+- Equals
+- NotEquals
+- GreaterThan
+- GreaterThanOrEqual
+- LessThan
+- LessThanOrEqual
+- Contains
+- StartsWith
+- EndsWith
 
 ### Sort Directions
-- `0` = Ascending
-- `1` = Descending
+- Ascending
+- Descending

@@ -169,11 +169,14 @@ dotnet run
 POST /api/products/search
 {
   "filters": [
-    { "field": "Category", "operator": 0, "value": "Electronics" },
-    { "field": "Price", "operator": 5, "value": 100 }
+    { "field": "Category", "operator": "Equals", "value": "Electronics" },
+    { "field": "Price", "operator": "LessThanOrEqual", "value": 100 }
   ],
   "sorts": [
-    { "field": "Price", "direction": 0 }
+    {
+      "field": "CategoryName",
+      "direction": "Ascending"
+    }
   ],
   "pageNumber": 1,
   "pageSize": 10

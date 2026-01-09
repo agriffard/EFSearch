@@ -1,8 +1,11 @@
+using System.Text.Json.Serialization;
+
 namespace EFSearch.Models;
 
 /// <summary>
 /// Defines the sort direction.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum SortDirection
 {
     /// <summary>

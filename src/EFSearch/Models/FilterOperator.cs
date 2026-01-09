@@ -1,8 +1,11 @@
+using System.Text.Json.Serialization;
+
 namespace EFSearch.Models;
 
 /// <summary>
 /// Defines the available filter operators.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum FilterOperator
 {
     /// <summary>

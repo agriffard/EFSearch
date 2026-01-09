@@ -1,6 +1,7 @@
 using EFSearch.Sample.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Text.Json.Serialization;
 
 // Configure Serilog from appsettings.json
 Log.Logger = new LoggerConfiguration()
@@ -20,7 +21,12 @@ try
     builder.Host.UseSerilog();
 
     // Add services to the container.
-    builder.Services.AddControllers();
+    builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+        {
+            // Serialize/deserialize enums as strings, e.g., "Equals" instead of 0
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
 
     // Configure EF Core with configurable database provider
     var databaseProvider = builder.Configuration.GetValue<string>("DatabaseProvider") ?? "InMemory";

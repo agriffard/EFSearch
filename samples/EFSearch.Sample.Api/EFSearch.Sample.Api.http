@@ -16,7 +16,7 @@ Content-Type: application/json
   "filters": [
     {
       "field": "CategoryName",
-      "operator": 0,
+      "operator": "Equals",
       "value": "Electronics"
     }
   ],
@@ -33,14 +33,14 @@ Content-Type: application/json
   "filters": [
     {
       "field": "Price",
-      "operator": 5,
+      "operator": "LessThanOrEqual",
       "value": 100
     }
   ],
   "sorts": [
     {
       "field": "Price",
-      "direction": 1
+      "direction": "Descending"
     }
   ],
   "pageNumber": 1,
@@ -55,14 +55,14 @@ Content-Type: application/json
   "filters": [
     {
       "field": "Name",
-      "operator": 6,
+      "operator": "Contains",
       "value": "Desk"
     }
   ],
   "sorts": [
     {
       "field": "Name",
-      "direction": 0
+      "direction": "Ascending"
     }
   ],
   "pageNumber": 1,
@@ -77,14 +77,14 @@ Content-Type: application/json
   "filters": [
     {
       "field": "IsActive",
-      "operator": 0,
+      "operator": "Equals",
       "value": true
     }
   ],
   "sorts": [
     {
       "field": "CreatedAt",
-      "direction": 1
+      "direction": "Descending"
     }
   ],
   "pageNumber": 1,
@@ -100,7 +100,7 @@ Content-Type: application/json
   "sorts": [
     {
       "field": "CategoryName",
-      "direction": 0
+      "direction": "Ascending"
     }
   ],
   "pageNumber": 1,
