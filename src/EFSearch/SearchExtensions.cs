@@ -58,6 +58,21 @@ public static class SearchExtensions
     }
 
     /// <summary>
+    /// Applies a search request to a queryable using SearchableAttribute mappings.
+    /// </summary>
+    /// <typeparam name="T">The entity type.</typeparam>
+    /// <param name="query">The queryable to apply the search to.</param>
+    /// <param name="request">The search request containing filters, sorts, and pagination.</param>
+    /// <returns>A SearchResult containing the paged items and pagination info.</returns>
+    public static SearchResult<T> ApplySearch<T>(
+        this IQueryable<T> query,
+        SearchRequest request)
+    {
+        var map = SearchMapBuilder.FromAttributes<T>();
+        return query.ApplySearch(request, map);
+    }
+
+    /// <summary>
     /// Applies filters from a search request to a queryable.
     /// </summary>
     /// <typeparam name="T">The entity type.</typeparam>

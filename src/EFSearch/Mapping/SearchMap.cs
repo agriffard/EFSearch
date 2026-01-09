@@ -55,6 +55,21 @@ public class SearchMap<T>
     }
 
     /// <summary>
+    /// Maps a field name to a property directly (used internally for attribute-based configuration).
+    /// </summary>
+    /// <param name="fieldName">The external field name to use in search requests.</param>
+    /// <param name="propertyInfo">The property info to map.</param>
+    /// <returns>The current SearchMap instance for fluent configuration.</returns>
+    internal SearchMap<T> MapProperty(string fieldName, PropertyInfo propertyInfo)
+    {
+        ArgumentNullException.ThrowIfNull(fieldName);
+        ArgumentNullException.ThrowIfNull(propertyInfo);
+
+        _fieldMappings[fieldName] = propertyInfo;
+        return this;
+    }
+
+    /// <summary>
     /// Restricts the allowed filter operators.
     /// </summary>
     /// <param name="operators">The operators to allow.</param>

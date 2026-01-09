@@ -15,25 +15,16 @@ namespace EFSearch.Sample.Api.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly SampleDbContext _dbContext;
-    private readonly SearchMap<ProductModel> _searchMap;
+    private static readonly SearchMap<ProductModel> _searchMap = SearchMapBuilder.FromAttributes<ProductModel>();
 
     public ProductsController(SampleDbContext dbContext)
     {
         _dbContext = dbContext;
-        
-        // Configure the search map with whitelisted fields for ProductModel
-        _searchMap = new SearchMap<ProductModel>()
-            .Map(p => p.Id)
-            .Map(p => p.Name)
-            .Map(p => p.CategoryName)
-            .Map(p => p.Price)
-            .Map(p => p.Stock)
-            .Map(p => p.IsActive)
-            .Map(p => p.CreatedAt);
     }
 
     /// <summary>
     /// Searches products with filtering, sorting, and pagination.
+    /// Uses cached SearchMap built from SearchableAttribute annotations on ProductModel.
     /// </summary>
     /// <param name="request">The search request.</param>
     /// <returns>A paged result of products.</returns>

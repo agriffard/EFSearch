@@ -1,14 +1,71 @@
-# SQL Query Logging Guide
+# EFSearch Sample API
 
 ## Overview
-The Sample API now supports SQL query logging to verify database operations, including joins between Product and Category tables.
+This sample API demonstrates the EFSearch library for Entity Framework Core, which provides powerful search, filtering, sorting, and pagination capabilities.
 
-## Configuration
+## Configuration Approaches
+
+### Attribute-Based Configuration (Recommended)
+
+Mark properties as searchable using the `[Searchable]` attribute:
+
+```csharp
+public class ProductModel
+{
+    [Searchable]
+    public int Id { get; set; }
+    
+    [Searchable]
+    public string Name { get; set; }
+    
+    [Searchable]
+    public decimal Price { get; set; }
+    
+    // This property is not searchable
+    public string InternalNotes { get; set; }
+}
+```
+
+In your controller:
+
+```csharp
+public class ProductsController : ControllerBase
+{
+    // Build SearchMap once from attributes (cached)
+    private static readonly SearchMap<ProductModel> _searchMap = 
+        SearchMapBuilder.FromAttributes<ProductModel>();
+
+    [HttpPost("search")]
+    public ActionResult<SearchResult<ProductModel>> Search([FromBody] SearchRequest request)
+    {
+        var query = GetProductModelQuery();
+        var result = query.ApplySearch(request, _searchMap);
+        return Ok(result);
+    }
+}
+```
+
+**Custom field names:**
+```csharp
+[Searchable("product_name")]  // Use different name in API
+public string Name { get; set; }
+```
+
+### Fluent Configuration (Alternative)
+
+You can still configure mappings programmatically:
+
+```csharp
+private readonly SearchMap<ProductModel> _searchMap = new SearchMap<ProductModel>()
+    .Map(p => p.Id)
+    .Map(p => p.Name)
+    .Map("product_price", p => p.Price)  // Custom field name
+    .AllowOperators(FilterOperator.Equals, FilterOperator.Contains);  // Restrict operators
+```
+
+## Database Configuration
 
 ### Option 1: InMemory Database (Default)
-The InMemory provider is enabled by default. It will log query execution details but not actual SQL queries (since InMemory doesn't use SQL).
-
-**appsettings.json:**
 ```json
 {
   "DatabaseProvider": "InMemory"
@@ -16,22 +73,15 @@ The InMemory provider is enabled by default. It will log query execution details
 ```
 
 ### Option 2: SQLite Database (Recommended for SQL Logging)
-To see actual SQL queries with JOINs, switch to SQLite:
-
-**appsettings.json:**
 ```json
 {
   "DatabaseProvider": "SQLite"
 }
 ```
 
-## Viewing Logs
+## SQL Query Logging
 
-When you run the application, SQL queries will be logged to the console. 
-
-### Example Output with SQLite:
-
-When you call the `/api/products/search` endpoint, you'll see SQL like:
+When using SQLite, SQL queries are logged to the console. Example:
 
 ```sql
 SELECT "p"."Id", "p"."Name", "c"."Name" AS "CategoryName", "p"."Price", "p"."Stock", "p"."IsActive", "p"."CreatedAt"
@@ -41,22 +91,22 @@ ORDER BY "c"."Name", "p"."Price" DESC
 LIMIT @__p_0 OFFSET @__p_1
 ```
 
-This confirms that:
-1. The JOIN between Products and Categories is working correctly
-2. The CategoryName is being retrieved from the Categories table
-3. Sorting by CategoryName translates to sorting by the joined Category table's Name column
-
 ## Testing
 
-Run any of the HTTP requests in `EFSearch.Sample.Api.http` and check the console output to verify the SQL queries.
+Use the requests in `EFSearch.Sample.Api.http`:
 
-**Recommended test:**
 ```http
 POST {{EFSearch.Sample.Api_HostAddress}}/api/products/search
 Content-Type: application/json
 
 {
-  "filters": [],
+  "filters": [
+    {
+      "field": "Price",
+      "operator": 4,
+      "value": 100
+    }
+  ],
   "sorts": [
     {
       "field": "CategoryName",
@@ -68,4 +118,17 @@ Content-Type: application/json
 }
 ```
 
-This will show the SQL query with the JOIN and ORDER BY on the Category.Name field.
+### Available Filter Operators
+- `0` = Equals
+- `1` = NotEquals
+- `2` = GreaterThan
+- `3` = GreaterThanOrEqual
+- `4` = LessThan
+- `5` = LessThanOrEqual
+- `6` = Contains
+- `7` = StartsWith
+- `8` = EndsWith
+
+### Sort Directions
+- `0` = Ascending
+- `1` = Descending
