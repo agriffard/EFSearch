@@ -15,7 +15,7 @@ Content-Type: application/json
 {
   "filters": [
     {
-      "field": "Category",
+      "field": "CategoryName",
       "operator": 0,
       "value": "Electronics"
     }
@@ -89,6 +89,26 @@ Content-Type: application/json
   ],
   "pageNumber": 1,
   "pageSize": 5
+}
+
+### Search products - Sort by CategoryName ascending, then by Price descending
+POST {{EFSearch.Sample.Api_HostAddress}}/api/products/search
+Content-Type: application/json
+
+{
+  "filters": [],
+  "sorts": [
+    {
+      "field": "CategoryName",
+      "direction": 0
+    },
+    {
+      "field": "Price",
+      "direction": 1
+    }
+  ],
+  "pageNumber": 1,
+  "pageSize": 15
 }
 
 ###

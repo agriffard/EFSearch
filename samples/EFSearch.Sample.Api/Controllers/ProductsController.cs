@@ -3,6 +3,7 @@ using EFSearch.Models;
 using EFSearch.Sample.Api.Data;
 using EFSearch.Sample.Api.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EFSearch.Sample.Api.Controllers;
 
@@ -14,17 +15,17 @@ namespace EFSearch.Sample.Api.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly SampleDbContext _dbContext;
-    private readonly SearchMap<Product> _searchMap;
+    private readonly SearchMap<ProductModel> _searchMap;
 
     public ProductsController(SampleDbContext dbContext)
     {
         _dbContext = dbContext;
         
-        // Configure the search map with whitelisted fields
-        _searchMap = new SearchMap<Product>()
+        // Configure the search map with whitelisted fields for ProductModel
+        _searchMap = new SearchMap<ProductModel>()
             .Map(p => p.Id)
             .Map(p => p.Name)
-            .Map(p => p.Category)
+            .Map(p => p.CategoryName)
             .Map(p => p.Price)
             .Map(p => p.Stock)
             .Map(p => p.IsActive)
@@ -37,9 +38,10 @@ public class ProductsController : ControllerBase
     /// <param name="request">The search request.</param>
     /// <returns>A paged result of products.</returns>
     [HttpPost("search")]
-    public ActionResult<SearchResult<Product>> Search([FromBody] SearchRequest request)
+    public ActionResult<SearchResult<ProductModel>> Search([FromBody] SearchRequest request)
     {
-        var result = _dbContext.Products.ApplySearch(request, _searchMap);
+        var query = GetProductModelQuery();
+        var result = query.ApplySearch(request, _searchMap);
         return Ok(result);
     }
 
@@ -50,7 +52,7 @@ public class ProductsController : ControllerBase
     /// <param name="pageSize">Number of items per page.</param>
     /// <returns>A paged result of products.</returns>
     [HttpGet]
-    public ActionResult<SearchResult<Product>> GetAll(
+    public ActionResult<SearchResult<ProductModel>> GetAll(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10)
     {
@@ -60,7 +62,8 @@ public class ProductsController : ControllerBase
             PageSize = pageSize
         };
         
-        var result = _dbContext.Products.ApplySearch(request, _searchMap);
+        var query = GetProductModelQuery();
+        var result = query.ApplySearch(request, _searchMap);
         return Ok(result);
     }
 
@@ -70,9 +73,10 @@ public class ProductsController : ControllerBase
     /// <param name="id">The product ID.</param>
     /// <returns>The product if found.</returns>
     [HttpGet("{id}")]
-    public ActionResult<Product> GetById(int id)
+    public ActionResult<ProductModel> GetById(int id)
     {
-        var product = _dbContext.Products.Find(id);
+        var product = GetProductModelQuery()
+            .FirstOrDefault(p => p.Id == id);
         
         if (product == null)
         {
@@ -80,5 +84,21 @@ public class ProductsController : ControllerBase
         }
         
         return Ok(product);
+    }
+
+    private IQueryable<ProductModel> GetProductModelQuery()
+    {
+        return _dbContext.Products
+            .Include(p => p.Category)
+            .Select(p => new ProductModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                CategoryName = p.Category!.Name,
+                Price = p.Price,
+                Stock = p.Stock,
+                IsActive = p.IsActive,
+                CreatedAt = p.CreatedAt
+            });
     }
 }
