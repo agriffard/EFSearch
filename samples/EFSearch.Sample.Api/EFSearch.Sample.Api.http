@@ -101,10 +101,6 @@ Content-Type: application/json
     {
       "field": "CategoryName",
       "direction": 0
-    },
-    {
-      "field": "Price",
-      "direction": 1
     }
   ],
   "pageNumber": 1,

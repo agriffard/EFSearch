@@ -416,3 +416,11 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# SQLite database files
+sample.db
+sample.db-shm
+sample.db-wal
+
+# Serilog log files
+logs/
