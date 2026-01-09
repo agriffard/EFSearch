@@ -91,7 +91,7 @@ Content-Type: application/json
   "pageSize": 5
 }
 
-### Search products - Sort by CategoryName ascending, then by Price descending
+### Search products - Sort by CategoryName ascending
 POST {{EFSearch.Sample.Api_HostAddress}}/api/products/search
 Content-Type: application/json
 
